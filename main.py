@@ -11,7 +11,9 @@ def normalization(red, green, blue):
 
 def input_data_network(inputs, weights, bias):
     img = Image.open(r"C:\Users\pottv\Downloads\eletron\ai\image.jpg")
-    matriz = np.array(img)
+    img_resized = img.resize((64, 64)) # redimensiona a imagem para 64x64 pixels para não ficar gigante
+    
+    matriz = np.array(img_resized)
     CHANNELS = 3 # 3 canais de cores (RGB), se quiser mudar para hexa tem que lembrar de mudar aqui
     
     height, width, canais = matriz.shape
@@ -31,14 +33,15 @@ def input_data_network(inputs, weights, bias):
         for w in range(width):
             neuron_value = normalization(matriz[h, w, 0], matriz[h, w, 1], matriz[h, w, 2])
             neuron_matriz[h, w] = neuron_value
-    print(neuron_matriz[0,0]) # valor do neuronio na posição 0,0
-
+            print(neuron_matriz[h, w]) # valor do neuronio na posição 0,0
 
     #A função astype(np.uint8) é utilizada para converter valores de uma array de float para um tipo de dados unsigned 8 bits. 
     # Isso significa que os valores vão de 0 a 255
     # Tem que fazer a entrada ser enfileirada e ser transformada em uma matriz de 1 dimensão
     #input = normal_gray.flatten() # flatten transforma a matriz em uma lista de valores
     #print(input[0]) 
+
+    
 
     
 input_data_network(0, 0, 0)
