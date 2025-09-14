@@ -9,6 +9,32 @@ def normalization(red, green, blue):
     neuron_value = gray_escale / 255
     return neuron_value
 
+def hidden_layer(input_count , neuron_count_layer, input):
+
+    PLACEHOLDER_SUM = []   # lista que vai armazenar a saída de cada neurônio da camada
+    PLACEHOLDER_BIAS = []  # lista que vai armazenar o bias de cada neurônio
+    
+    for j in range(neuron_count_layer):
+
+        soma = 0  # acumulador da soma para o neurônio j
+
+        # Loop sobre todas as entradas
+        for i in range(input_count):
+            weight = np.random.rand()   # gera um peso aleatório para a ligação i->j
+            soma += input[i] * weight   # soma parcial (x_i * w_ij)
+
+        # Agora que percorri todos os inputs, adiciono o bias do neurônio j
+        bias = np.random.rand()          # bias único para o neurônio j
+        soma += bias
+
+        # Guardo os valores
+        PLACEHOLDER_SUM.append(soma)     # saída bruta do neurônio (z_j)
+        PLACEHOLDER_BIAS.append(bias)    # bias usado neste neurônio
+
+        print(f"Neurônio {j}: Saída (z_j) = {soma:.4f}, Bias = {bias:.4f}")
+   
+    return PLACEHOLDER_SUM, PLACEHOLDER_BIAS
+
 def input_data_network():
     img = Image.open(r"C:\Users\pottv\Downloads\eletron\ai\image.jpg")
     RESHAPE = 64
@@ -46,31 +72,11 @@ def input_data_network():
     # Primeira camada da rede neural
     # soma de todos os vallores . peso + bias é igual ao processo de ativação que o proximo neuronio vai receber
 
-    input_count = RESHAPE * RESHAPE       # quantidade de entradas (ex: 64*64 = 4096)
-    neuron_count_layer = 32               # quantidade de neurônios da camada
+    input_count = RESHAPE * RESHAPE     
+    neuron_count_layer = 32               
 
-    PLACEHOLDER_SUM = []   # lista que vai armazenar a saída de cada neurônio da camada
-    PLACEHOLDER_BIAS = []  # lista que vai armazenar o bias de cada neurônio
-
-    # Loop sobre os neurônios (um de cada vez)
-    for j in range(neuron_count_layer):
-
-        soma = 0  # acumulador da soma para o neurônio j
-
-        # Loop sobre todas as entradas
-        for i in range(input_count):
-            weight = np.random.rand()   # gera um peso aleatório para a ligação i->j
-            soma += input[i] * weight   # soma parcial (x_i * w_ij)
-
-        # Agora que percorri todos os inputs, adiciono o bias do neurônio j
-        bias = np.random.rand()          # bias único para o neurônio j
-        soma += bias
-
-        # Guardo os valores
-        PLACEHOLDER_SUM.append(soma)     # saída bruta do neurônio (z_j)
-        PLACEHOLDER_BIAS.append(bias)    # bias usado neste neurônio
-
-        print(f"Neurônio {j}: Saída (z_j) = {soma:.4f}, Bias = {bias:.4f}")
+    ACTIVACTION_VALUE, BIAS =  hidden_layer(input_count , neuron_count_layer, input)
+    print("Valores de Ativação:", ACTIVACTION_VALUE)
 
     #implementação de sigmoid
 
