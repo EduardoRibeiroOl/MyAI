@@ -2,6 +2,7 @@
 # entrada vai ser um valor de matriz (n x m)
 from PIL import Image
 import numpy as np
+import sys
 
 
 def normalization(red, green, blue):
@@ -9,33 +10,33 @@ def normalization(red, green, blue):
     neuron_value = gray_escale / 255
     return neuron_value
 
-def hidden_layer(input_count , neuron_count_layer, input):
 
-    PLACEHOLDER_SUM = []   # lista que vai armazenar a saída de cada neurônio da camada
-    PLACEHOLDER_BIAS = []  # lista que vai armazenar o bias de cada neurônio
-    
-    for j in range(neuron_count_layer):
 
-        soma = 0  # acumulador da soma para o neurônio j
 
-        # Loop sobre todas as entradas
-        for i in range(input_count):
-            weight = np.random.rand()   # gera um peso aleatório para a ligação i->j
-            soma += input[i] * weight   # soma parcial (x_i * w_ij)
+# Trabalhando 21/09/2025
 
-        # Agora que percorri todos os inputs, adiciono o bias do neurônio j
-        bias = np.random.rand()          # bias único para o neurônio j
-        soma += bias
 
-        # Guardo os valores
-        PLACEHOLDER_SUM.append(soma)     # saída bruta do neurônio (z_j)
-        PLACEHOLDER_BIAS.append(bias)    # bias usado neste neurônio
+def hidden_layer(input, weight, bias):
 
-        print(f"Neurônio {j}: Saída (z_j) = {soma:.4f}, Bias = {bias:.4f}")
+    PLACEHOLDER_SUM = input @ weight  # soma total de ativação relacionando o array input e a matriz pesos (x_i * w_ij + bias)
+    PLACEHOLDER_SUM += bias
    
-    return PLACEHOLDER_SUM, PLACEHOLDER_BIAS
+    return PLACEHOLDER_SUM   
 
-def input_data_network():
+def sigmoid(ACTIVATION_VALUE):
+    sigmoid_output = 1 / (1 + np.exp(-ACTIVATION_VALUE))
+    return sigmoid_output
+
+def relu(ACTIVATION_VALUE):
+    RELU_OUTPUT = np.maximum(0, ACTIVATION_VALUE)
+    return RELU_OUTPUT
+
+
+ # Trabalhando hoje 21/09/2025
+
+
+
+def use_network():
     img = Image.open(r"C:\Users\pottv\Downloads\eletron\ai\image.jpg")
     RESHAPE = 64
     img_resized = img.resize((RESHAPE, RESHAPE)) # redimensiona a imagem para 64x64 pixels para não ficar gigante
@@ -73,18 +74,52 @@ def input_data_network():
     # soma de todos os vallores . peso + bias é igual ao processo de ativação que o proximo neuronio vai receber
 
     input_count = RESHAPE * RESHAPE     
-    neuron_count_layer = 32               
+    neuron_count_layer = 32         
+    
 
-    ACTIVACTION_VALUE, BIAS =  hidden_layer(input_count , neuron_count_layer, input)
-    print("Valores de Ativação:", ACTIVACTION_VALUE)
-
-    #implementação de sigmoid
+    # Trabalhando hoje
 
 
+    weight = np.random.rand(input_count, neuron_count_layer)
+    bias = np.random.rand(neuron_count_layer)  # inicializa bias com valores aleatórios entre 0 e 1
 
 
+    # Se quiser fazer na mão sem numpy, fui um pouco burrinho:
+    #for i in range(input_count):
+        #for j in range(neuron_count_layer):
+            #weight[i][j] = np.random.rand()  # inicializa pesos com valores aleatórios entre 0 e 1   
+
+    # valores serão aleatórios uma unica vez em toda rede
+         
+    
+    # Trabalhando hoje
 
 
+    ACTIVATION_VALUE = hidden_layer(input, weight, bias)
+  
 
-input_data_network()
+    #implementação de caso queira sigmoid
+
+    use_sigmoid = False
+    use_relu = False
+    
+    if sys.argv[1] == "sigmoid":
+        use_sigmoid = True 
+
+    if sys.argv[1] == "relu":
+        use_sigmoid = True
+
+
+     #aplicar a função de ativação sigmoid
+    if use_sigmoid == True:
+        SIGMOID_OUTPUT = sigmoid(ACTIVATION_VALUE)
+        print(SIGMOID_OUTPUT)
+
+    #implementação de caso queira relu
+
+    if use_relu == True:
+        RELU_OUTPUT = np.maximum(ACTIVATION_VALUE)
+        print(RELU_OUTPUT)
+
+use_network()
 
