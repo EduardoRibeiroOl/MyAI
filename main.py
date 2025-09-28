@@ -11,11 +11,6 @@ def normalization(red, green, blue):
     return neuron_value
 
 
-
-
-# Trabalhando 21/09/2025
-
-
 def hidden_layer(input, weight, bias):
 
     PLACEHOLDER_SUM = input @ weight  # soma total de ativação relacionando o array input e a matriz pesos (x_i * w_ij + bias)
@@ -30,9 +25,6 @@ def sigmoid(ACTIVATION_VALUE):
 def relu(ACTIVATION_VALUE):
     RELU_OUTPUT = np.maximum(0, ACTIVATION_VALUE)
     return RELU_OUTPUT
-
-
- # Trabalhando hoje 21/09/2025
 
 
 
@@ -80,7 +72,7 @@ def use_network():
     # Trabalhando hoje
 
 
-    weight = np.random.rand(input_count, neuron_count_layer)
+    weight = np.random.rand(input_count, neuron_count_layer) * 0.001
     bias = np.random.rand(neuron_count_layer)  # inicializa bias com valores aleatórios entre 0 e 1
 
 
@@ -90,16 +82,9 @@ def use_network():
             #weight[i][j] = np.random.rand()  # inicializa pesos com valores aleatórios entre 0 e 1   
 
     # valores serão aleatórios uma unica vez em toda rede
-         
     
-    # Trabalhando hoje
-
-
     ACTIVATION_VALUE = hidden_layer(input, weight, bias)
   
-
-    #implementação de caso queira sigmoid
-
     use_sigmoid = False
     use_relu = False
     
@@ -107,18 +92,14 @@ def use_network():
         use_sigmoid = True 
 
     if sys.argv[1] == "relu":
-        use_sigmoid = True
+        use_relu = True
 
-
-     #aplicar a função de ativação sigmoid
     if use_sigmoid == True:
         SIGMOID_OUTPUT = sigmoid(ACTIVATION_VALUE)
         print(SIGMOID_OUTPUT)
 
-    #implementação de caso queira relu
-
     if use_relu == True:
-        RELU_OUTPUT = np.maximum(ACTIVATION_VALUE)
+        RELU_OUTPUT = np.maximum(0, ACTIVATION_VALUE)
         print(RELU_OUTPUT)
 
 use_network()
