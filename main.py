@@ -1,8 +1,19 @@
-# entrada de dados onde cada neuronio vai receber um valor
-# entrada vai ser um valor de matriz (n x m)
 from PIL import Image
 import numpy as np
 import sys
+
+RESHAPE = 64
+neuron_count_layer = 32    
+input_count = RESHAPE * RESHAPE
+
+use_sigmoid = False
+use_relu = False
+    
+if sys.argv[1] == "sigmoid":
+     use_sigmoid = True 
+
+if sys.argv[1] == "relu":
+    use_relu = True
 
 
 def normalization(red, green, blue):
@@ -28,9 +39,8 @@ def relu(ACTIVATION_VALUE):
 
 
 
-def use_network():
+def first_layer():
     img = Image.open(r"C:\Users\pottv\Downloads\eletron\ai\image.jpg")
-    RESHAPE = 64
     img_resized = img.resize((RESHAPE, RESHAPE)) # redimensiona a imagem para 64x64 pixels para não ficar gigante
     
     matriz = np.array(img_resized)
@@ -39,11 +49,6 @@ def use_network():
     height, width, canais = matriz.shape
     neuron_matriz = np.zeros((height, width)) # matriz de neuronios que vai receber os valores normalizados
 
-    #print("Matriz:", matriz)  # matriz 3d
-    #print("Tipo:", type(matriz))  # tipo de array que a matriz será
-    #print("Formato (h, w, c):", matriz.shape) # chape da matriz (height, width, channels) 
-    #print("Pixel [0,0]:", matriz[0, 0]) # Matriz tridimensional, chamado de tensor por ser entrada do nosso sistema. Para uma imagem colorida, teremos 3 canais de cores (RGB) 
-    
     # Processo de normalização; Acbamos de alocar um tensor de 3 dimensôes, mas temos que simplificar, podemos trabalhar com os valores separados ou 
     # transformar esses valores em escalas de cinza, ou seja, preto e branco.
     # formula de luminancia: 0.299*R + 0.587*G + 0.114*B
@@ -53,8 +58,7 @@ def use_network():
         for w in range(width):
             neuron_value = normalization(matriz[h, w, 0], matriz[h, w, 1], matriz[h, w, 2])
             neuron_matriz[h, w] = neuron_value
-            #print(neuron_matriz[h, w]) # imprimir valor do neuronio na posição 0,0
-
+    
     #A função astype(np.uint8) é utilizada para converter valores de uma array de float para um tipo de dados unsigned 8 bits. 
     # Isso significa que os valores vão de 0 a 255
     
@@ -65,8 +69,8 @@ def use_network():
     # Primeira camada da rede neural
     # soma de todos os vallores . peso + bias é igual ao processo de ativação que o proximo neuronio vai receber
 
-    input_count = RESHAPE * RESHAPE     
-    neuron_count_layer = 32         
+    #input_count = RESHAPE * RESHAPE     
+    #neuron_count_layer = 32         
     
 
     # Trabalhando hoje
@@ -85,22 +89,46 @@ def use_network():
     
     ACTIVATION_VALUE = hidden_layer(input, weight, bias)
   
-    use_sigmoid = False
-    use_relu = False
-    
-    if sys.argv[1] == "sigmoid":
-        use_sigmoid = True 
-
-    if sys.argv[1] == "relu":
-        use_relu = True
 
     if use_sigmoid == True:
         SIGMOID_OUTPUT = sigmoid(ACTIVATION_VALUE)
-        print(SIGMOID_OUTPUT)
-
+        return SIGMOID_OUTPUT
+        
     if use_relu == True:
-        RELU_OUTPUT = np.maximum(0, ACTIVATION_VALUE)
-        print(RELU_OUTPUT)
+        RELU_OUTPUT = relu(ACTIVATION_VALUE)
+        return RELU_OUTPUT
 
-use_network()
 
+def next_layer(previous_layer): # valor da camada anterior
+
+    weight = np.random.rand(len(previous_layer), neuron_count_layer) * 0.001
+    bias = np.random.rand(neuron_count_layer)
+
+    ACTIVATION_VALUE = hidden_layer(previous_layer, weight, bias)
+  
+    if use_sigmoid == True:
+        SIGMOID_OUTPUT = sigmoid(ACTIVATION_VALUE)
+        return SIGMOID_OUTPUT
+        
+    if use_relu == True:
+        RELU_OUTPUT = relu(ACTIVATION_VALUE)
+        return RELU_OUTPUT
+    
+
+def final_layer():
+
+    layer_constructor = first_layer()
+    
+    for integer in range (int(sys.argv[2])): #Precisa usar a function int por conta do argumento ser passado com string
+        placeholder_constructor = next_layer(layer_constructor)
+        layer_constructor = placeholder_constructor
+        print(f"Camada {integer+1} finalizada — média de ativação: {np.mean(layer_constructor):.4f}")
+
+    output_neurons = 3
+    weight_out = np.random.rand(len(layer_constructor), output_neurons) * 0.001
+    bias_out = np.random.rand(output_neurons)
+
+    final_output = sigmoid(hidden_layer(layer_constructor, weight_out, bias_out))
+    print("Saída final:", final_output)
+
+final_layer()
